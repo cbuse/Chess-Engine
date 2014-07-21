@@ -1,25 +1,21 @@
 // Zugzwang Chess Engine - stage 2
 
-#include "auxiliary.h"
+#ifndef AUXILIARY_H_
+#define AUXILIARY_H_
 
-std::string Auxiliary::convertToBitString(BITBOARD value) {
-	std::string str(64, '0');
+#include <string>
+#include <vector>
+#include "constants.h"
 
-	for (int i = 0; i < 64; i++)
-	{
-		if ((1ll << i) & value)
-			str[i] = '1';
-	}
+// Auxiliary functions.
+namespace Auxiliary {
+	// Returns a string consisting of the bits of the argument "value", sorted from
+	// least significant to most significant.
+	// For debugging purposes.
+	std::string convertToBitString(BITBOARD value);
+	
+	// Returns a vector consisting of the set bits of the argumeny "x".
+	std::vector<int> getOneBits(BITBOARD x);
+};
 
-	return str;
-}
-
-std::vector<int> Auxiliary::getOneBits(BITBOARD x) {
-	std::vector<int> res;
-	for (int i = 0; i < 64; ++i) {
-		if ((1ULL << i) & x) {
-			res.push_back(i);
-		}
-	}
-	return res;
-}
+#endif
