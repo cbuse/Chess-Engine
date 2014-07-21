@@ -1,0 +1,55 @@
+Zugzwang Engine
+
+Contributors:
+	Diana Despa
+	Buse Elena Cristina
+	Orlando Mihail Alexandru
+	Rogoz Claudia-Rafaela
+
+Project details:
+
+Zugzwang is a Winboard/Xboard chess engine written in C++ developed as a university project. 
+
+Implementation details:
+
+----------Stage 1----------
+
+For efficiency, Zugzwang engine uses as board representation - the bitboard. The main idea is to represent the board using a sequence of bits of 1 or 0 (in a 64 bits variable), each bit indicating the absence or the presence of some state about each place on the board. For this matter, our implementation contains a series of bitboards for white pieces, black pieces, and for each piece type.
+
+For the first stage of implementation, we used a couple of classes each of them with it's own purpose.
+
+The entry point of this project is the main function which initiates the comunication between Winboard/Xboard engine by calling the method interpretCommand from the Parser class. 
+
+With regards to the communication between Zugzwang engine and Xboard/Winboard, we used cin and cout for writing and reading from input to output. Also we used the line "setbuf(stdin, NULL)" to be sure that after each received comand, the command is instantly delivered to or from the engine. This is made by turning off the buffering. 
+
+Parser clas, as the name says, parses the commands given by Winboard/Xboard (such as move, quit, force, white, black, new, go) to other engine classes in order to be computed.
+
+The class FromXboardtoEngine receives the command to be implemented from the Parser class and computes the needed changes by setting flags or by calling methods within ChessBoard class. This class uses flags from "Modes.cpp".
+
+The class FromEnginetoXboard receives commands from ChessBoard class such as move or resign in order to parse them to Winboard/Xboard.
+
+The class Timer is to be implemented in further stages. It is used for keeping track of the remaining time in order to make a fast and efficient move.
+
+Finally, the ChessBoard class is used for making a valid move, or a valid attack, for updating the bitboard ( when move is made ) and for the initialization of the game. This class uses "constants.h". 
+
+At this stage we've managed to generate all the "next-move" bitboards for each piece (all the possible moves one piece can go to in order to attack the opponent)
+This was used in order to know whether the king is in danger or not. 
+However, at this stage we couldn't manage to make the version stable so there may be some bugs when the king is attacked. 
+
+----------Stage 2----------
+
+At this stage, we expanded the ChessBoard class with several new methods that simulate the behaviour of a chess player that moves randomly, but defends his king fiercely :D. Also, now, when trying to generate a valid move, the engine can tell whether the king is in chess, in which case it tries several methods to get him out of chess, whether it has lost the game or is in stalemate.
+
+We split the implementations of the ChessBoard class members into different files in order to find a specific method easier, when debugging or modifying the code.
+
+To start with, the class ChessBoard-public_methods contains, beside the classic functions implemented in the first stage, a function that is used for choosing randomly between all the pieces and all the legal moves that can be applied when the time comes. 
+
+In order to make correct updates of the opponent moves, in the ChessBoard-helper_methods class we have functions that recognise chess techniques such as castling and en_passant.
+
+Also, there can be found a function that is used for checking whether a given piece has any randomly generated moves left or not.
+
+In the ChessBoard-generate_moves_methods class, we've managed to implement the castling function (only if possible & valid).
+
+In order to make the piece moves valid taking in consideration that it won't endanger the king, the move is checked by several functions before it is sent to the board. The functions are as follow: try_moving_piece, kingIsSafe and try_castling. Before any move is made, a backup for the table of bitboards is computed. If a certain move isn't valid, the table is reestablished and another move awaits to be generated.
+   
+When all the possible moves are computed and none found valid, the engine resigns. That is also the case in the event of a stalemate.
